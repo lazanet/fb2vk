@@ -105,11 +105,3 @@ for page in data:
 	print()
 
 print("Data posted! End.")
-
-
-
-
-
-
-
-
