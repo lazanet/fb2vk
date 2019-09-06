@@ -1,0 +1,3 @@
+[submodule "includes/facebook-scraper"]
+	path = includes/facebook-scraper
+	url = https://github.com/kevinzg/facebook-scraper.git
