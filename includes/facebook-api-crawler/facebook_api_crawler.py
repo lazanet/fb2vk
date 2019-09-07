@@ -41,15 +41,3 @@ def get_posts(pageID, fbToken, time = str(datetime.now())):
 def fbTime2normal(t):
 	tmp = datetime.strptime(t.replace(" ",""),'%Y-%m-%dT%H:%M:%S+0000')
 	return tmp
-
-"""
-def brute_img(url):
-	url = url.replace("www.facebook.com", "m.facebook.com")
-	image_regex = re.compile(r"<a href=\"([^\"]+)\" target=\"_blank\" class=\"sec\">View Full Size<\/a>")
-	html = curl_fetch_binary(url).decode("utf-8")						
-	match = image_regex.search(html)
-	if (match):
-		return match.groups()[0].replace("&amp;", "&")
-	else:
-		return None
-"""

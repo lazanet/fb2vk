@@ -87,11 +87,11 @@ for page in data:
 		image_url = None
 		link = None
 
-		if "text" in post and post["text"] != None:	
+		if "text" in post:	
 			message = post["text"]
-		if "image" in post and post["image"] != None:
+		if "image" in post:
 			image_url = post["image"]
-		if "link" in post and post["link"] != None:
+		if "link" in post:
 			link = post["link"]
 
 		status = vk.post(vkPageId, userToken, message, image_url, link)

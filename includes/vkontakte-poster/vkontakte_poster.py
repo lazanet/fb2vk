@@ -1,15 +1,17 @@
 import json, sys, requests
 from .util import *
 
-def post(pageID, userToken, message, image=None, link=None):
+def post(pageID, userToken, message=None, image=None, link=None):
 	apiVersion = 5.71
 	options = {
 		"v" : apiVersion,
 		"access_token" : userToken,
 		"owner_id" : -int(pageID),
-		"from_group" : 1,
-		"message" : message, 
+		"from_group" : 1 
 	}
+	
+	if message != None:
+		options["message"] = message
 
 	if image != None:
 		try:
