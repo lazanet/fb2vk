@@ -46,7 +46,7 @@ def post(pageID, userToken, message=None, image=None, link=None):
 			print ("#######################")
 			return -1;
 
-	elif link != None:
+	if link != None:
 		options["attachments"] = urlEncodeNonAscii(link)
 
 	result = curl_post("https://api.vk.com/method/wall.post", options)

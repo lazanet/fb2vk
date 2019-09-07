@@ -16,6 +16,9 @@ def get_posts(pageID, fbToken, time = str(datetime.now())):
 			post["post_id"] = wall_post["id"].split("_")[1]
 			post["time"] = fbTime2normal(wall_post["created_time"])
 			post["post_url"] = wall_post["permalink_url"]
+			post["text"] = ""
+			post["link"] = None
+			post["image"] = None
 
 			if "message" in wall_post:
 				post["text"] = wall_post["message"]
@@ -25,7 +28,7 @@ def get_posts(pageID, fbToken, time = str(datetime.now())):
 
 			if wall_post["type"] == "photo":
 				post["image"] = wall_post["full_picture"]
-				del post["link"]
+				post["link"] = None
 
 			data.append(post)
 

@@ -13,9 +13,7 @@ def fetchAPI(fb_api, name, lastTime):
 	if (tmp == -1):
 		return -1
 	for index, post in enumerate(tmp):
-		if "link" in post and "facebook" in post["link"].split("/")[2]: # Shared posts
-			if not "text" in post:
-				tmp[index]["text"] = ""
+		if post["link"] != None and "facebook" in post["link"].split("/")[2]: # Shared posts
 			tmp[index]["text"] += "\nShared from: " + post["link"]
 	return tmp
 
@@ -26,6 +24,9 @@ def fetchScraper(fb_scraper, name, lastTime):
 	for index, post in enumerate(tmp2):
 		if post["post_url"] != None:
 			post["post_url"] = post["post_url"].replace("m.facebook.com", "facebook.com")
+		if post["link"] != None and post["image"] != None:
+			if "facebook.com" in post["link"]:
+				del tmp2[index]["image"]
 		if post["time"] != None and post["time"] > lastTime: # Normal posts
 			tmp.append(post)
 			last = True
@@ -83,16 +84,9 @@ for page in data:
 
 	print("Page: " + name)
 	for post in posts:
-		message = None
-		image_url = None
-		link = None
-
-		if "text" in post:	
-			message = post["text"]
-		if "image" in post:
-			image_url = post["image"]
-		if "link" in post:
-			link = post["link"]
+		message = post["text"]
+		image_url = post["image"]
+		link = post["link"]
 
 		status = vk.post(vkPageId, userToken, message, image_url, link)
 		if status != 0:

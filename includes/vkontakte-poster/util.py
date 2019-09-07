@@ -1,4 +1,4 @@
-import urllib, requests
+import urllib, requests, re
 from urllib.parse import urlencode, quote_plus
 from urllib.request import urlopen, Request
 from httplib2 import iri2uri
