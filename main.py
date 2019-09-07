@@ -26,7 +26,7 @@ def fetchScraper(fb_scraper, name, lastTime):
 			post["post_url"] = post["post_url"].replace("m.facebook.com", "facebook.com")
 		if post["link"] != None and post["image"] != None:
 			if "facebook.com" in post["link"]:
-				del tmp2[index]["image"]
+				tmp2[index]["image"] = None
 		if post["time"] != None and post["time"] > lastTime: # Normal posts
 			tmp.append(post)
 			last = True
