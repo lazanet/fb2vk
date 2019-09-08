@@ -14,7 +14,12 @@ def post(pageID, userToken, message=None, image=None, link=None):
 		options["message"] = message
 
 	if link != None:
-		options["attachments"] = urlEncodeNonAscii(link)
+		link = urlEncodeNonAscii(link)
+		options["attachments"] = link
+		method_url = 'https://api.vk.com/method/photos.getWallUploadServer?'
+		data = { "v" : apiVersion, "access_token": userToken, "url": link }
+		response = requests.post(method_url, data, verify=False)
+		print(response.text)
 
 	if image != None:
 		try:

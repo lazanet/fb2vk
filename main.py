@@ -3,6 +3,7 @@ from config import *
 from util import *
 from pprint import pprint, pformat
 from datetime import datetime
+from time import sleep
 
 fb_scraper = importlib.import_module('includes.facebook-scraper.facebook_scraper', None)
 fb_api = importlib.import_module('includes.facebook-api-crawler.facebook_api_crawler', None)
@@ -94,6 +95,7 @@ for page in data:
 		status = vk.post(vkPageId, userToken, message, image_url, link)
 		if status != 0:
 			break
+		sleep(1)
 
 	if status == 0:
 		saveTimeFile(name, timeFetched[name])
