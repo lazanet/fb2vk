@@ -26,8 +26,10 @@ def fetchScraper(fb_scraper, name, lastTime):
 			post["post_url"] = post["post_url"].replace("m.facebook.com", "facebook.com")
 		if post["time"] != None and post["time"] > lastTime: # Normal posts
 			if post["shared_text"] is not "" and post["link"] is None:
-				post["text"] += "\n Shared from: \n" + post["shared_text"]
-				post["link"] = post["post_url"]
+				post["text"] += "\n\nShared from: " + post["post_url"]
+				post["text"] += "\n" + post["shared_text"]
+			elif post["shared_text"] is not "" and post["image"] is not None: # Link to external website
+				post["image"] = None # Don't want to upload preview as image
 			del post["shared_text"]
 			tmp.append(post)
 			last = True
@@ -57,7 +59,7 @@ for page in data:
 	fbPage = page["fbPage"]
 	lastTime = getTimeFile(name)
 	
-	tmp = fetchAPI(fb_api, fbPage, lastTime)
+	tmp = -1#fetchAPI(fb_api, fbPage, lastTime)
 	if (tmp == -1): # Facebook permission stuff..
 		tmp = fetchScraper(fb_scraper, fbPage, lastTime)
 
