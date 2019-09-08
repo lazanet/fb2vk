@@ -18,17 +18,17 @@ def fetchAPI(fb_api, name, lastTime):
 	return tmp
 
 def fetchScraper(fb_scraper, name, lastTime):
-	tmp2 = [post for post in fb_scraper.get_posts(name)]
-
+	tmp2 = [post for post in fb_scraper.get_posts(name, pages=3)]
 	tmp = []
 	last = False
 	for index, post in enumerate(tmp2):
 		if post["post_url"] != None:
 			post["post_url"] = post["post_url"].replace("m.facebook.com", "facebook.com")
-		if post["link"] != None and post["image"] != None:
-			if "facebook.com" in post["link"]:
-				tmp2[index]["image"] = None
 		if post["time"] != None and post["time"] > lastTime: # Normal posts
+			if post["shared_text"] is not "" and post["link"] is None:
+				post["text"] += "\n Shared from: \n" + post["shared_text"]
+				post["link"] = post["post_url"]
+			del post["shared_text"]
 			tmp.append(post)
 			last = True
 		elif post["time"] == None and last: # Shared posts...
@@ -38,6 +38,7 @@ def fetchScraper(fb_scraper, name, lastTime):
 			last = False
 		else:
 			last = False
+		
 	return tmp
 
 ######################################################################
