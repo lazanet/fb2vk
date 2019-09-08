@@ -1,7 +1,7 @@
 import importlib
 from config import *
 from util import *
-from pprint import pprint
+from pprint import pprint, pformat
 from datetime import datetime
 
 fb_scraper = importlib.import_module('includes.facebook-scraper.facebook_scraper', None)
@@ -19,6 +19,7 @@ def fetchAPI(fb_api, name, lastTime):
 
 def fetchScraper(fb_scraper, name, lastTime):
 	tmp2 = [post for post in fb_scraper.get_posts(name)]
+
 	tmp = []
 	last = False
 	for index, post in enumerate(tmp2):
@@ -31,9 +32,8 @@ def fetchScraper(fb_scraper, name, lastTime):
 			tmp.append(post)
 			last = True
 		elif post["time"] == None and last: # Shared posts...
-			if post["text"] == None:
+			if tmp[-1]["text"] == None:
 				tmp[-1]["text"] = ""
-			tmp[-1]["text"] += "\nShared from: " + post["post_url"]
 			tmp[-1]["link"] = post["post_url"]
 			last = False
 		else:
