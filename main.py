@@ -23,6 +23,7 @@ def fetchScraper(fb_scraper, name, lastTime):
 	tmp = []
 	last = False
 	for index, post in enumerate(tmp2):
+		post["text"] = post["post_text"]
 		if post["post_url"] != None:
 			post["post_url"] = post["post_url"].replace("m.facebook.com", "facebook.com")
 		if post["time"] != None and post["time"] > lastTime: # Normal posts
