@@ -1,6 +1,12 @@
 ## fb part
 fbToken = "FACEBOOK_PERMANENT_TOKEN"
 
+<<<<<<< HEAD
+fbEmail = None
+fbPass = None
+
+=======
+>>>>>>> a059efe32b3b5d1b348f3228ea5caf0fd0a62374
 ## vk part
 appID = "VK_APP_ID"
 
