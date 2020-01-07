@@ -105,8 +105,4 @@ venv.bak/
 
 config.py
 log.txt
-<<<<<<< HEAD
 nohup.out
-=======
-test*
->>>>>>> a059efe32b3b5d1b348f3228ea5caf0fd0a62374
