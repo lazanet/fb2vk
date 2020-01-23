@@ -22,7 +22,7 @@ def fetchScraper(fb_scraper, name, lastTime):
 	if fbEmail is None:
 		tmp2 = [post for post in fb_scraper.get_posts(name, pages=3)]
 	else:
-		tmp2 = [post for post in fb_scraper.get_posts(name, pages=3, credentials=(fbEmail, fbPass)]		
+		tmp2 = [post for post in fb_scraper.get_posts(name, pages=3, credentials=(fbEmail, fbPass))]		
 
 	tmp = []
 	last = False
