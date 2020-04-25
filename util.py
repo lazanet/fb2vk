@@ -17,8 +17,12 @@ def getTimeFile(name):
 			with open(path, "r") as f:
 				timestamp = f.read().strip()
 	except:
-		print("IO еrror")
-	return datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S.%f')
+		print("IO error")
+	try:
+		d = datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S.%f')
+	except:
+		d = datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S')
+	return d
 
 def saveTimeFile(name, time):
 	with open(os.path.join(folder, "logs", name+".txt"), "w") as f:
