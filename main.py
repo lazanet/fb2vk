@@ -1,4 +1,4 @@
-import importlib
+import importlib, traceback
 from config import *
 from util import *
 from pprint import pprint, pformat
@@ -20,9 +20,9 @@ def fetchAPI(fb_api, name, lastTime):
 
 def fetchScraper(fb_scraper, name, lastTime):
 	if fbEmail is None:
-		tmp2 = [post for post in fb_scraper.get_posts(name, pages=6)]
+		tmp2 = [post for post in fb_scraper.get_posts(name, pages=3)]
 	else:
-		tmp2 = [post for post in fb_scraper.get_posts(name, pages=6, credentials=(fbEmail, fbPass))]
+		tmp2 = [post for post in fb_scraper.get_posts(name, pages=3, credentials=(fbEmail, fbPass))]
 
 	tmp = []
 	last = False
@@ -61,20 +61,29 @@ print()
 print("Fetching facebook data...")
 
 for page in data:
-	name = page["name"]
-	fbPage = page["fbPage"]
-	lastTime = getTimeFile(name)
-	
-	tmp = -1#fetchAPI(fb_api, fbPage, lastTime)
-	if (tmp == -1): # Facebook permission stuff..
-		tmp = fetchScraper(fb_scraper, fbPage, lastTime)
+	try:
+		name = page["name"]
+		fbPage = page["fbPage"]
+		lastTime = getTimeFile(name)
+		
+		tmp = -1#fetchAPI(fb_api, fbPage, lastTime)
+		if (tmp == -1): # Facebook permission stuff..
+			tmp = fetchScraper(fb_scraper, fbPage, lastTime)
 
-	timeFetched[name] = datetime.now()
-	
-	tmp.reverse()
-	fetchData[name] = tmp
+		timeFetched[name] = datetime.now()
+		
+		tmp.reverse()
+		fetchData[name] = tmp
 
-	print(name + " end, found {} posts".format(len(tmp))) 	
+		print(name + " end, found {} posts".format(len(tmp)))
+	except KeyboardInterrupt:
+		print("Killed by ctrl+c")
+		exit(-1)
+	except:
+		print("######################")
+		print("{} broke, exception was: ".format(name))
+		traceback.print_exc()
+		print("######################")
 
 print()
 print("Facebook data downloaded!")
@@ -86,6 +95,8 @@ print()
 
 for page in data:
 	name = page["name"]
+	if name not in fetchData:
+		continue
 	posts = fetchData[page["name"]]
 	vkPageId = page["vkPageId"]
 	userToken = page["userToken"]	
