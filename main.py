@@ -1,122 +1,59 @@
-import importlib, traceback
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 from config import *
 from util import *
-from pprint import pprint, pformat
-from datetime import datetime
+from fetch_fb import *
 from time import sleep
 
-fb_scraper = importlib.import_module('includes.facebook-scraper.facebook_scraper', None)
-fb_api = importlib.import_module('includes.facebook-api-crawler.facebook_api_crawler', None)
 vk = importlib.import_module('includes.vkontakte-poster.vkontakte_poster', None)
-
-def fetchAPI(fb_api, name, lastTime):
-	tmp = fb_api.get_posts(name, fbToken, time=str(lastTime))
-	if (tmp == -1):
-		return -1
-	for index, post in enumerate(tmp):
-		if post["link"] != None and "facebook" in post["link"].split("/")[2]: # Shared posts
-			tmp[index]["text"] += "\nShared from: " + post["link"]
-	return tmp
-
-def fetchScraper(fb_scraper, name, lastTime):
-	if fbEmail is None:
-		tmp2 = [post for post in fb_scraper.get_posts(name, pages=3)]
-	else:
-		tmp2 = [post for post in fb_scraper.get_posts(name, pages=3, credentials=(fbEmail, fbPass))]
-
-	tmp = []
-	last = False
-	for index, post in enumerate(tmp2):
-		post["text"] = post["post_text"]
-		if post["post_url"] != None:
-			post["post_url"] = post["post_url"].replace("m.facebook.com", "facebook.com")
-		if post["time"] != None and post["time"] > lastTime: # Normal posts
-			if post["shared_text"] is not "" and post["link"] is None:
-				post["text"] += "\n\nShared from: " + post["post_url"]
-				post["text"] += "\n" + post["shared_text"]
-			elif post["shared_text"] is not "" and post["image"] is not None: # Link to external website
-				post["image"] = None # Don't want to upload preview as image
-			del post["shared_text"]
-			tmp.append(post)
-			last = True
-		elif post["time"] == None and last: # Shared posts...
-			if tmp[-1]["text"] == None:
-				tmp[-1]["text"] = ""
-			tmp[-1]["link"] = post["post_url"]
-			last = False
-		else:
-			last = False
-		
-	return tmp
 
 ######################################################################
 # Main program
 ######################################################################
+if __name__ == "__main__":
+	info("Bot started")
+	info("Fetching facebook data...")
 
-fetchData = {}
-timeFetched = {}
-
-print("Bot started")
-print()
-print("Fetching facebook data...")
-
-for page in data:
-	try:
-		name = page["name"]
-		fbPage = page["fbPage"]
-		lastTime = getTimeFile(name)
-		
-		tmp = -1#fetchAPI(fb_api, fbPage, lastTime)
-		if (tmp == -1): # Facebook permission stuff..
-			tmp = fetchScraper(fb_scraper, fbPage, lastTime)
-
-		timeFetched[name] = datetime.now()
-		
-		tmp.reverse()
-		fetchData[name] = tmp
-
-		print(name + " end, found {} posts".format(len(tmp)))
-	except KeyboardInterrupt:
-		print("Killed by ctrl+c")
-		exit(-1)
-	except:
-		print("######################")
-		print("{} broke, exception was: ".format(name))
-		traceback.print_exc()
-		print("######################")
-
-print()
-print("Facebook data downloaded!")
-print()
-
-print()
-print("Posting data to vKontakte...")
-print()
-
-for page in data:
-	name = page["name"]
-	if name not in fetchData:
-		continue
-	posts = fetchData[page["name"]]
-	vkPageId = page["vkPageId"]
-	userToken = page["userToken"]	
-	status = 0
-
-	print("Page: " + name)
-	for post in posts:
-		message = post["text"]
-		image_url = post["image"]
-		link = post["link"]
-
-		status = vk.post(vkPageId, userToken, message, image_url, link)
-		if status != 0:
-			break
-		sleep(1)
-
-	if status == 0:
-		saveTimeFile(name, timeFetched[name])
+	if parallel:
+		with Pool(processes=3) as pool: 
+			pool.map(process_fb_page, data)	
+	else:
+		for page in data:
+			process_fb_page(page)
 	
-	print(name + " done!")
-	print()
+	info("Facebook data downloaded!")
 
-print("Data posted! End.")
+	info("Posting data to vKontakte...")
+
+	for page in data:
+		name = page["name"]
+		if name not in fetch_data:
+			continue
+		posts = fetch_data[page["name"]]
+		vk_page_id = page["vk_page_id"]
+		user_token = page["user_token"]	
+		status = 0
+
+		print("Page: " + name)
+		for post in posts:
+			message = post["text"]
+			image_url = post["image"]
+			link = post["link"]
+
+			try:
+				vk.post(vk_page_id, user_token, message, image_url, link)
+			except Exception as e:
+				report_exception("VK posting broke", e)
+				status = -1
+				break
+			sleep(1)
+
+		if status == 0:
+			save_time_file(name, time_fetched[name])
+		
+		print(name + " done!")
+		print()
+
+	report_error_end(vk)
+	info("Data posted! End.")

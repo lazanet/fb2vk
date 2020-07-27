@@ -50,10 +50,7 @@ def post(pageID, userToken, message=None, image=None, link=None):
 			options["attachments"] = photo_loc
 
 		except Exception as e:
-			print("Problem posting image!")
-			print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno), type(e).__name__, e)
-			print ("#######################")
-			return -1;
+			raise Exception("Problem posting image. Error on line {}'.format(sys.exc_info()[-1].tb_lineno), type(e).__name__, e)")
 
 	result = curl_post("https://api.vk.com/method/wall.post", options)
 
@@ -61,7 +58,4 @@ def post(pageID, userToken, message=None, image=None, link=None):
 	result = json.loads(result)
 
 	if ("error" in result and result["error"]["error_code"] == 214):
-		print("Over vk post limit, will try again later!")
-		return result["error"]["error_code"]
-
-	return 0
+		raise Exception("Over vk post limit, will try again later! Error code: {}".format(result["error"]["error_code"]))
