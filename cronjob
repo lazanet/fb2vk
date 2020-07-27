@@ -2,7 +2,8 @@
 
 dir_location="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 script_location="$dir_location/main.py"
-cron_def="*/5 * * * * $script_location >/dev/null 2>&1"
+log_location="$dir_location/logs/log.txt"
+cron_def="*/5 * * * * $script_location >$log_location 2>&1"
 echo "$cron_def"
 
 (crontab -l 2>/dev/null; echo "$cron_def") | crontab -
