@@ -50,7 +50,7 @@ def post(pageID, userToken, message=None, image=None, link=None):
 			options["attachments"] = photo_loc
 
 		except Exception as e:
-			raise Exception("Problem posting image. Error on line {}'.format(sys.exc_info()[-1].tb_lineno), type(e).__name__, e)")
+			raise Exception("Problem posting image. Error on line {} : {}".format(sys.exc_info()[-1].tb_lineno, e))
 
 	result = curl_post("https://api.vk.com/method/wall.post", options)
 

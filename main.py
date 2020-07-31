@@ -51,6 +51,8 @@ if __name__ == "__main__":
 
 		if status == 0:
 			save_time_file(name, time_fetched[name])
+		else:
+			break
 		
 		print(name + " done!")
 		print()
